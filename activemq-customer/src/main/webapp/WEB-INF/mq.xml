@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd">
+
+
+    <context:component-scan base-package="com.shuai"/>
+
+    <mvc:annotation-driven/>
+
+    <amq:connectionFactory id="amqConnectionFactory"
+                           brokerURL="tcp://127.0.0.1:61616"
+                           userName="admin"
+                           password="admin"/>
+
+    <!-- 配置JMS连接工长 -->
+    <bean id="connectionFactory"
+          class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory"/>
+        <property name="sessionCacheSize" value="100"/>
+    </bean>
+
+    <!-- 方法1-->
+
+    <bean id="messageListener" class="com.shuai.listener.ExampleListener"/>
+
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+        <!-- 设置消息队列的名字-->
+       <constructor-arg>
+           <value>listener-queue</value>
+       </constructor-arg>
+   </bean>
+
+   <bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+       <property name="connectionFactory" ref="connectionFactory"/>
+       <property name="destination" ref="destination"/>
+       <property name="messageListener" ref="messageListener"/>
+   </bean>
+
+
+
+
+</beans>

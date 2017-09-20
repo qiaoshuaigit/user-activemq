@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:amq="http://activemq.apache.org/schema/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+
+    <context:component-scan base-package="com.shuai" />
+
+    <mvc:annotation-driven />
+
+    <amq:connectionFactory id="amqConnectionFactory"
+                           brokerURL="tcp://127.0.0.1:61616"
+                           userName="admin"
+                           password="admin" />
+
+    <!-- 配置JMS连接工长 -->
+    <bean id="connectionFactory"
+          class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory" />
+        <property name="sessionCacheSize" value="100" />
+    </bean>
+
+    <bean id="defaultDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg>
+            <value>listener-queue</value>
+        </constructor-arg>
+    </bean>
+
+    <!-- 生产者 -->
+    <bean id="jmsQueueTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <!-- true是topic，false是queue，默认是false，此处显示写出false -->
+        <property name="pubSubDomain" value="false" />
+        <property name="defaultDestination" ref="defaultDestination"/>
+    </bean>
+
+    <!--<bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        &lt;!&ndash;发布模式&ndash;&gt;
+        <property name="pubSubDomain" value="true"/>
+    </bean>-->
+
+</beans>
