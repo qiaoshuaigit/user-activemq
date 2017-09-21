@@ -6,40 +6,51 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
 
-    <context:component-scan base-package="com.shuai" />
+    <context:component-scan base-package="com.shuai"/>
 
-    <mvc:annotation-driven />
+    <mvc:annotation-driven/>
 
     <amq:connectionFactory id="amqConnectionFactory"
                            brokerURL="tcp://127.0.0.1:61616"
                            userName="admin"
-                           password="admin" />
+                           password="admin"/>
 
     <!-- 配置JMS连接工长 -->
     <bean id="connectionFactory"
           class="org.springframework.jms.connection.CachingConnectionFactory">
-        <constructor-arg ref="amqConnectionFactory" />
-        <property name="sessionCacheSize" value="100" />
+        <constructor-arg ref="amqConnectionFactory"/>
+        <property name="sessionCacheSize" value="100"/>
     </bean>
-
+    <!--队列模式 目的地-->
     <bean id="defaultDestination" class="org.apache.activemq.command.ActiveMQQueue">
         <constructor-arg>
             <value>listener-queue</value>
         </constructor-arg>
     </bean>
 
-    <!-- 生产者 -->
+    <!--队列模式  生产者 -->
     <bean id="jmsQueueTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="connectionFactory" ref="connectionFactory"/>
         <!-- true是topic，false是queue，默认是false，此处显示写出false -->
-        <property name="pubSubDomain" value="false" />
+        <property name="pubSubDomain" value="false"/>
         <property name="defaultDestination" ref="defaultDestination"/>
     </bean>
 
-    <!--<bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
+    <!--         分割线          -->
+
+    <bean id="topicDestination" class="org.apache.activemq.command.ActiveMQTopic">
+        <!--  设置消息队列的名字-->
+        <constructor-arg>
+            <value>topic</value>
+        </constructor-arg>
+    </bean>
+
+    <!--发布订阅模式  生产者-->
+    <bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="connectionFactory"/>
-        &lt;!&ndash;发布模式&ndash;&gt;
+        <!--发布模式-->
         <property name="pubSubDomain" value="true"/>
-    </bean>-->
+        <property name="defaultDestination" ref="topicDestination"/>
+    </bean>
 
 </beans>

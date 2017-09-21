@@ -1,5 +1,6 @@
 package com.shuai.contro;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Controller;
@@ -17,23 +18,39 @@ import javax.jms.*;
 @RequestMapping("/provider")
 public class UserProviderController {
 
+    @Qualifier("jmsQueueTemplate")
     @Resource
     private JmsTemplate jmsTemplate;
+
+    @Qualifier("jmsTopicTemplate")
+    @Resource
+    private JmsTemplate jmsTopicTemplate;
 
     @Resource(name = "defaultDestination")
     private Destination defaultDestination;
 
+    @Resource(name = "topicDestination")
+    private Destination topicDestination;
+
 
     @RequestMapping("/send/{id}")
     @ResponseBody
-    public void sendMessage(@PathVariable("id") final String id){
-        System.out.println("----发送----"+id);
-        jmsTemplate.send(defaultDestination,new MessageCreator() {
+    public void sendMessage(@PathVariable("id") final String id) {
+        System.out.println("----queue发送----" + id);
+        jmsTemplate.send(defaultDestination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                //MapMessage mapMessage = session.createMapMessage();
-                //mapMessage.setInt("typeofint",123456);
                 return session.createTextMessage(id);
-                //return mapMessage;
+            }
+        });
+    }
+
+    @RequestMapping("/sendTopic/{id}")
+    @ResponseBody
+    public void sendTopicMessage(@PathVariable("id") final String id) {
+        System.out.println("topic发送" + id);
+        jmsTopicTemplate.send(topicDestination, new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
+                return session.createTextMessage(id);
             }
         });
     }

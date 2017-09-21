@@ -63,4 +63,25 @@
     </bean>
 
 
+    <!-- topic 模式 -->
+
+    <bean id="topicDestination" class="org.apache.activemq.command.ActiveMQTopic">
+        <!--  设置消息队列的名字-->
+        <constructor-arg>
+            <value>topic</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="messageTopicListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <constructor-arg>
+            <bean class="com.shuai.listener.MessageTopicListener"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="jmsTopicContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer" >
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="messageListener" ref="messageTopicListener"/>
+        <property name="destination" ref="topicDestination"/>
+    </bean>
+
 </beans>
