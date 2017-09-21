@@ -11,6 +11,7 @@
     <modules>
         <module>activemq-provider</module>
         <module>activemq-customer</module>
+        <module>activemq-model</module>
     </modules>
 
     <properties>

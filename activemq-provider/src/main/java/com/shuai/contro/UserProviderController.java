@@ -1,5 +1,6 @@
 package com.shuai.contro;
 
+import com.shuai.model.User;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -55,5 +56,18 @@ public class UserProviderController {
         });
     }
 
+    @RequestMapping("/sendModelTopic/")
+    @ResponseBody
+    public void sendTopicModelMessage() {
+        jmsTopicTemplate.send(topicDestination, new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
+                ObjectMessage message = session.createObjectMessage();
+                User user = new User("特朗普","北京");
+                message.setObject(user);
+                System.out.println("topic发送model"+user.toString());
+                return message;
+            }
+        });
+    }
 
 }

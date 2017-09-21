@@ -1,9 +1,8 @@
 package com.shuai.listener;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
+import com.shuai.model.User;
+
+import javax.jms.*;
 
 /**
  * @author shuaion 2017/9/20
@@ -18,8 +17,15 @@ public class MessageTopicListener implements MessageListener {
             catch (JMSException ex) {
                 throw new RuntimeException(ex);
             }
-        }
-        else {
+        }else if (message instanceof ObjectMessage){
+            try {
+                User user = (User) ((ObjectMessage) message).getObject();
+                System.out.println("topic 收到的ObjectMessage消息是"+user.toString());
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
+
+        }else {
             throw new IllegalArgumentException("Message must be of type TextMessage");
         }
     }
