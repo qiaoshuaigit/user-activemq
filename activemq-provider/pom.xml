@@ -114,6 +114,8 @@
             <artifactId>spring-jms</artifactId>
             <version>${spring.version}</version>
         </dependency>
+
+
     </dependencies>
     <build>
         <finalName>activemq-provider</finalName>

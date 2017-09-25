@@ -82,6 +82,29 @@
         <property name="connectionFactory" ref="connectionFactory"/>
         <property name="messageListener" ref="messageTopicListener"/>
         <property name="destination" ref="topicDestination"/>
+        <property name="sessionAcknowledgeMode" value="2"/>
+    </bean>
+
+
+    <!--邮件-->
+    <bean id="emailDestination" class="org.apache.activemq.command.ActiveMQTopic">
+        <!--  设置消息队列的名字-->
+        <constructor-arg>
+            <value>email</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="messageEmailListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <constructor-arg>
+            <bean class="com.shuai.service.EmailService"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="jmsEmailContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer" >
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="messageListener" ref="messageEmailListener"/>
+        <property name="destination" ref="emailDestination"/>
+        <property name="sessionAcknowledgeMode" value="2"/>
     </bean>
 
 </beans>

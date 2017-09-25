@@ -1,6 +1,7 @@
 package com.shuai.listener;
 
 import com.shuai.model.User;
+import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 
 import javax.jms.*;
 
@@ -26,7 +27,7 @@ public class MessageTopicListener implements MessageListener {
             }
 
         }else {
-            throw new IllegalArgumentException("Message must be of type TextMessage");
+            throw new IllegalArgumentException("Message type are not support");
         }
     }
 }

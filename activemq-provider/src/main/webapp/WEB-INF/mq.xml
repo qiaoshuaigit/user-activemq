@@ -51,6 +51,24 @@
         <!--发布模式-->
         <property name="pubSubDomain" value="true"/>
         <property name="defaultDestination" ref="topicDestination"/>
+        <property name="sessionAcknowledgeMode" value="2"/>
+    </bean>
+
+
+    <bean id="emailDestination" class="org.apache.activemq.command.ActiveMQTopic">
+        <!--  设置消息队列的名字-->
+        <constructor-arg>
+            <value>email</value>
+        </constructor-arg>
+    </bean>
+
+    <!--发布订阅模式  生产者-->
+    <bean id="jmsEmailTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <!--发布模式-->
+        <property name="pubSubDomain" value="true"/>
+        <property name="defaultDestination" ref="emailDestination"/>
+        <property name="sessionAcknowledgeMode" value="2"/>
     </bean>
 
 </beans>
